@@ -135,11 +135,11 @@ class _DashboardPageState extends State<DashboardPage> {
     } else if (stok <= 5) {
       warnaLatar = Colors.amber.shade100;
       warnaTeks = Colors.amber.shade900;
-      label = 'Sisa \$stok';
+      label = 'Sisa $stok';
     } else {
       warnaLatar = Colors.green.shade100;
       warnaTeks = Colors.green.shade900;
-      label = 'Stok \$stok';
+      label = 'Stok $stok';
     }
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
@@ -219,7 +219,7 @@ class _DashboardPageState extends State<DashboardPage> {
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
-                        'PROMO \${item.diskonPersen}%',
+                        'PROMO ${item.diskonPersen}%',
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 9,
