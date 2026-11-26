@@ -65,9 +65,9 @@ class _KelolaPelangganPageState extends State<KelolaPelangganPage> {
     double longitude,
     String namaPelanggan,
   ) async {
-    // Membangun URL resmi Google Maps Directions API
+    // Membangun URL resmi Google Maps Directions API khusus sepeda motor
     final url = Uri.parse(
-      'https://www.google.com/maps/dir/?api=1&destination=$latitude,$longitude',
+      'https://www.google.com/maps/dir/?api=1&destination=$latitude,$longitude&travelmode=two_wheeler',
     );
     try {
       // Memeriksa dan meluncurkan aplikasi peta eksternal

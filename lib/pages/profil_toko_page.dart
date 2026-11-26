@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 // Mengimpor halaman kelola karyawan & pelanggan untuk jalan pintas menu
 import 'kelola_karyawan_page.dart';
 import 'kelola_pelanggan_page.dart';
+import '../helpers/database_helper.dart';
 
 // Halaman Pengaturan Profil Toko & Footer Struk Kasir
 class ProfilTokoPage extends StatefulWidget {
@@ -26,6 +27,7 @@ class _ProfilTokoPageState extends State<ProfilTokoPage> {
 
   // Nama kasir aktif yang sedang bertugas
   String _activeCashierName = 'Belum Ditentukan';
+  int _jumlahPelanggan = 0;
 
   @override
   void initState() {
@@ -46,6 +48,8 @@ class _ProfilTokoPageState extends State<ProfilTokoPage> {
   // --- MEMBACA PENGATURAN TOKO DARI SHAREDPREFERENCES ---
   Future<void> _muatProfilToko() async {
     final prefs = await SharedPreferences.getInstance();
+    final totalPelanggan =
+        await DatabaseHelper.instance.countPelanggan(); // <--- TAMBAHAN
     setState(() {
       _namaTokoController.text =
           prefs.getString('nama_toko') ?? 'SmartKasir Poliban';
@@ -59,6 +63,7 @@ class _ProfilTokoPageState extends State<ProfilTokoPage> {
           'Terima Kasih Atas Kunjungan Anda! Barang yang sudah dibeli tidak dapat ditukar.';
       _activeCashierName =
           prefs.getString('active_cashier_name') ?? 'Belum Ditentukan';
+      _jumlahPelanggan = totalPelanggan; // <--- TAMBAHAN
     });
   }
 
@@ -192,21 +197,22 @@ class _ProfilTokoPageState extends State<ProfilTokoPage> {
                   'Data Pelanggan & Lokasi GPS',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                 ),
-                subtitle: const Text(
-                  'Kelola member CRM dan navigasi rute pengantaran',
-                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                subtitle: Text(
+                  '$_jumlahPelanggan Member Pelanggan Terdaftar',
+                  style: const TextStyle(fontSize: 12, color: Colors.grey),
                 ),
                 trailing: const Icon(
                   Icons.chevron_right,
                   color: Color(0xFF1E3A8A),
                 ),
-                onTap: () {
-                  Navigator.push(
+                onTap: () async {
+                  await Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => const KelolaPelangganPage(),
                     ),
                   );
+                  _muatProfilToko();
                 },
               ),
             ),

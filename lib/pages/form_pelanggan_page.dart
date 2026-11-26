@@ -187,12 +187,19 @@ class _FormPelangganPageState extends State<FormPelangganPage> {
     final double? lat = double.tryParse(_latitudeController.text.trim());
     final double? lng = double.tryParse(_longitudeController.text.trim());
 
+    // Normalisasi nomor WA: ubah awalan '08' menjadi '628'
+    String nomorWaNormalized = _nomorWaController.text.trim();
+    if (nomorWaNormalized.startsWith('08')) {
+      nomorWaNormalized = '62${nomorWaNormalized.substring(1)}';
+    }
+
     // Membangun objek Pelanggan
     final pelangganBaru = Pelanggan(
       id: isEdit ? widget.pelanggan!.id : null,
       kodePelanggan: _kodeController.text.trim(),
       namaPelanggan: _namaController.text.trim(),
-      nomorWa: _nomorWaController.text.trim(),
+      nomorWa:
+          nomorWaNormalized, // <--- Gunakan variabel yang sudah dinormalisasi
       alamat: _alamatController.text.trim(),
       latitude: lat,
       longitude: lng,
