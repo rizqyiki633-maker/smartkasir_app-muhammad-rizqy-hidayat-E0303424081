@@ -1,8 +1,9 @@
 // Mengimpor antarmuka Flutter dan SharedPreferences
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-// Mengimpor halaman kelola karyawan untuk jalan pintas menu
+// Mengimpor halaman kelola karyawan & pelanggan untuk jalan pintas menu
 import 'kelola_karyawan_page.dart';
+import 'kelola_pelanggan_page.dart';
 
 // Halaman Pengaturan Profil Toko & Footer Struk Kasir
 class ProfilTokoPage extends StatefulWidget {
@@ -17,8 +18,8 @@ class _ProfilTokoPageState extends State<ProfilTokoPage> {
   final _namaTokoController = TextEditingController();
   final _alamatController = TextEditingController();
   final _noWaController = TextEditingController();
-  final _footerController = TextEditingController();
   final _igController = TextEditingController();
+  final _footerController = TextEditingController();
 
   // Status visual tombol simpan
   bool _sedangMenyimpan = false;
@@ -37,8 +38,8 @@ class _ProfilTokoPageState extends State<ProfilTokoPage> {
     _namaTokoController.dispose();
     _alamatController.dispose();
     _noWaController.dispose();
-    _footerController.dispose();
     _igController.dispose();
+    _footerController.dispose();
     super.dispose();
   }
 
@@ -52,10 +53,10 @@ class _ProfilTokoPageState extends State<ProfilTokoPage> {
           prefs.getString('alamat_toko') ??
           'Jl. Brigjend H. Hasan Basry, Banjarmasin';
       _noWaController.text = prefs.getString('no_wa') ?? '081234567890';
+      _igController.text = prefs.getString('ig_toko') ?? '@smartkasir_poliban';
       _footerController.text =
           prefs.getString('footer_struk') ??
           'Terima Kasih Atas Kunjungan Anda! Barang yang sudah dibeli tidak dapat ditukar.';
-      _igController.text = prefs.getString('ig_toko') ?? '@smartkasir_poliban';
       _activeCashierName =
           prefs.getString('active_cashier_name') ?? 'Belum Ditentukan';
     });
@@ -68,8 +69,9 @@ class _ProfilTokoPageState extends State<ProfilTokoPage> {
     await prefs.setString('nama_toko', _namaTokoController.text.trim());
     await prefs.setString('alamat_toko', _alamatController.text.trim());
     await prefs.setString('no_wa', _noWaController.text.trim());
-    await prefs.setString('footer_struk', _footerController.text.trim());
     await prefs.setString('ig_toko', _igController.text.trim());
+    await prefs.setString('footer_struk', _footerController.text.trim());
+
     setState(() => _sedangMenyimpan = false);
 
     if (!mounted) return;
@@ -164,6 +166,50 @@ class _ProfilTokoPageState extends State<ProfilTokoPage> {
                 ],
               ),
             ),
+            const SizedBox(height: 12),
+
+            // MENU MANAJEMEN DATA PELANGGAN & MEMBER (MODUL M13)
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: const Color(0xFFE2E8F0)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.05),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: ListTile(
+                leading: const CircleAvatar(
+                  radius: 20,
+                  backgroundColor: Color(0xFF0D9488),
+                  child: Icon(Icons.people_alt, color: Colors.white, size: 20),
+                ),
+                title: const Text(
+                  'Data Pelanggan & Lokasi GPS',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                ),
+                subtitle: const Text(
+                  'Kelola member CRM dan navigasi rute pengantaran',
+                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                ),
+                trailing: const Icon(
+                  Icons.chevron_right,
+                  color: Color(0xFF1E3A8A),
+                ),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const KelolaPelangganPage(),
+                    ),
+                  );
+                },
+              ),
+            ),
             const SizedBox(height: 20),
 
             // FORM IDENTITAS USAHA (SHAREDPREFERENCES)
@@ -224,7 +270,7 @@ class _ProfilTokoPageState extends State<ProfilTokoPage> {
             ),
             const SizedBox(height: 14),
 
-            // AKUN INSTAGRAM TOKO
+            // 4. AKUN INSTAGRAM TOKO
             TextFormField(
               controller: _igController,
               decoration: InputDecoration(
@@ -240,7 +286,7 @@ class _ProfilTokoPageState extends State<ProfilTokoPage> {
             ),
             const SizedBox(height: 14),
 
-            // 4. CATATAN KAKI STRUK (FOOTER RECEIPT)
+            // 5. CATATAN KAKI STRUK (FOOTER RECEIPT)
             TextFormField(
               controller: _footerController,
               maxLines: 2,

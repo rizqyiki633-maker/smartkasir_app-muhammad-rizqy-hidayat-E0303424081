@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import '../models/produk.dart';
 import '../helpers/database_helper.dart';
 import 'form_produk_page.dart';
+import 'kelola_pelanggan_page.dart';
 
 // Halaman Beranda & Katalog Kasir SmartKasir
 class DashboardPage extends StatefulWidget {
@@ -67,8 +68,8 @@ class _DashboardPageState extends State<DashboardPage> {
     });
   }
 
-  // --- LOGIKA DIALOG KONFIRMASI HAPUS PRODUK (MODAL ALERTDIALOG) ---
-  void _konfirmasiHapusProduk(BuildContext context, Produk item) {
+  // LOGIKA DIALOG KONFIRMASI HAPUS PRODUK (MODAL ALERTDIALOG)
+  void _konfirmasiHapusProduk(Produk item) {
     showDialog(
       context: context,
       builder:
@@ -84,7 +85,7 @@ class _DashboardPageState extends State<DashboardPage> {
               ],
             ),
             content: Text(
-              'Apakah Anda yakin ingin menghapus "\${item.nama}" dari database SQLite? Data yang dihapus tidak dapat dipulihkan kembali.',
+              'Apakah Anda yakin ingin menghapus "${item.nama}" dari database SQLite? Data yang dihapus tidak dapat dipulihkan kembali.',
             ),
             actions: [
               TextButton(
@@ -104,7 +105,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text(
-                        'Produk "\${item.nama}" berhasil dihapus dari database!',
+                        'Produk "${item.nama}" berhasil dihapus dari database!',
                       ),
                       backgroundColor: Colors.red.shade700,
                       behavior: SnackBarBehavior.floating,
@@ -128,6 +129,7 @@ class _DashboardPageState extends State<DashboardPage> {
     Color warnaLatar;
     Color warnaTeks;
     String label;
+
     if (stok == 0) {
       warnaLatar = Colors.red.shade100;
       warnaTeks = Colors.red.shade900;
@@ -141,6 +143,7 @@ class _DashboardPageState extends State<DashboardPage> {
       warnaTeks = Colors.green.shade900;
       label = 'Stok $stok';
     }
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
@@ -231,6 +234,7 @@ class _DashboardPageState extends State<DashboardPage> {
               ],
             ),
           ),
+
           // 2. DESKRIPSI & HARGA PRODUK (RAPAT & PROPORSIONAL)
           Padding(
             padding: const EdgeInsets.fromLTRB(8, 6, 8, 0),
@@ -261,6 +265,7 @@ class _DashboardPageState extends State<DashboardPage> {
             ),
           ),
           const Spacer(),
+
           // 3. BARIS TOMBOL AKSI CRUD (EDIT, HAPUS, & TAMBAH KE CART)
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
@@ -304,7 +309,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   tooltip: 'Hapus Produk',
                   padding: const EdgeInsets.all(4),
                   constraints: const BoxConstraints(),
-                  onPressed: () => _konfirmasiHapusProduk(context, item),
+                  onPressed: () => _konfirmasiHapusProduk(item),
                 ),
                 // Tombol Tambah ke Keranjang Kasir
                 IconButton(
@@ -320,7 +325,7 @@ class _DashboardPageState extends State<DashboardPage> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(
-                          '\${item.nama} dipilih untuk transaksi kasir',
+                          '${item.nama} dipilih untuk transaksi kasir',
                         ),
                         duration: const Duration(seconds: 1),
                       ),
@@ -431,6 +436,105 @@ class _DashboardPageState extends State<DashboardPage> {
               ],
             ),
           ),
+
+          // BARIS AKSI PINTAS CEPAT (QUICK ACTIONS): KELOLA PELANGGAN & TAMBAH PRODUK
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: [
+                Expanded(
+                  child: InkWell(
+                    onTap: () async {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const KelolaPelangganPage(),
+                        ),
+                      );
+                      _muatDataProduk();
+                    },
+                    borderRadius: BorderRadius.circular(10),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 8,
+                        horizontal: 12,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: const Color(0xFFCBD5E1)),
+                      ),
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.people_alt_outlined,
+                            size: 18,
+                            color: Color(0xFF1E3A8A),
+                          ),
+                          SizedBox(width: 8),
+                          Text(
+                            'Kelola Pelanggan',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF1E3A8A),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: InkWell(
+                    onTap: () async {
+                      final refresh = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const FormProdukPage(),
+                        ),
+                      );
+                      if (refresh == true) _muatDataProduk();
+                    },
+                    borderRadius: BorderRadius.circular(10),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 8,
+                        horizontal: 12,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF1E3A8A),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.add_box_outlined,
+                            size: 18,
+                            color: Colors.white,
+                          ),
+                          SizedBox(width: 8),
+                          Text(
+                            'Tambah Produk',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+
           // 2. KOTAK PENCARIAN CEPAT (SQL LIKE)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -441,7 +545,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 _muatDataProduk();
               },
               decoration: InputDecoration(
-                hintText: 'Cari nama produk kasir ...',
+                hintText: 'Cari nama produk...',
                 prefixIcon: const Icon(Icons.search, color: Color(0xFF1E3A8A)),
                 suffixIcon:
                     _keywordPencarian.isNotEmpty
@@ -472,6 +576,7 @@ class _DashboardPageState extends State<DashboardPage> {
             ),
           ),
           const SizedBox(height: 12),
+
           // 3. FILTER CHIP HORIZONTAL KATEGORI
           SizedBox(
             height: 38,
@@ -484,8 +589,8 @@ class _DashboardPageState extends State<DashboardPage> {
                 return Padding(
                   padding: const EdgeInsets.only(right: 8),
                   child: ChoiceChip(
-                    label: Text(_kategoriList[index]),
                     selected: isSelected,
+                    label: Text(_kategoriList[index]),
                     selectedColor: const Color(0xFF1E3A8A),
                     backgroundColor: Colors.white,
                     labelStyle: TextStyle(
@@ -510,6 +615,7 @@ class _DashboardPageState extends State<DashboardPage> {
             ),
           ),
           const SizedBox(height: 12),
+
           // 4. DAFTAR KATALOG DENGAN FUTUREBUILDER (DATA PERSISTENSI SQLITE)
           Expanded(
             child: FutureBuilder<List<Produk>>(
@@ -546,7 +652,7 @@ class _DashboardPageState extends State<DashboardPage> {
                         const SizedBox(height: 10),
                         Text(
                           _keywordPencarian.isNotEmpty
-                              ? 'Produk "\$_keywordPencarian" tidak ditemukan.'
+                              ? 'Produk "$_keywordPencarian" tidak ditemukan.'
                               : 'Belum ada produk pada kategori ini.',
                           style: TextStyle(
                             color: Colors.grey.shade600,
@@ -562,8 +668,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   padding: const EdgeInsets.fromLTRB(16, 0, 16, 80),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
-                    mainAxisExtent:
-                        220, // Kunci tinggi kartu tetap (misal: 220 px)
+                    mainAxisExtent: 220, // Kunci tinggi kartu tetap
                     crossAxisSpacing: 12,
                     mainAxisSpacing: 12,
                   ),
